@@ -1,4 +1,4 @@
-import DataConversionClass from "./dataConversionClass";
+import DataConversionClass from "./DataConversionClass";
 
 function fakeDataSync (){
     let d = new Date();
