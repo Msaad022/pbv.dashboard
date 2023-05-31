@@ -1,5 +1,5 @@
 import react, { useEffect, useState, useLayoutEffect } from "react";
-import DataConversionClass from "./dataConversionClass";
+import DataConversionClass from "./DataConversionClass";
 import ApiClass from "./ApiClass";
 // Create Global Context
 
