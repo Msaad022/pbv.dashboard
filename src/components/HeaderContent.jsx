@@ -2,7 +2,7 @@ import { useState } from "react";
 import { DateRangePicker, Button, ButtonToolbar, Checkbox, Loader } from "rsuite";
 import "rsuite/dist/rsuite.css";
 import PbvCtxEvents from '../contextsHook/pbvCtxEvents'
-import dataConversionClass from "../contextsHook/dataConversionClass"
+import DataConversionClass from "../contextsHook/DataConversionClass"
 import ApiClass from "../contextsHook/ApiClass"
 
 const { allowedMaxDays, afterToday, combine } = DateRangePicker;
@@ -44,7 +44,7 @@ function HeaderContent() {
   function rangePickerHandler(e) {
     let from = e[0]
     let to = e[1]
-    dateRange = dataConversionClass.formatDateHandler(from,to)
+    dateRange = DataConversionClass.formatDateHandler(from,to)
   }
 
   function sendHandler() {
@@ -54,7 +54,7 @@ function HeaderContent() {
     if(dateRange.length != 0){
       ApiClass.apiFilterRequest(dateRange[0], dateRange[1]).then((res) => {
         dateRange = []
-        const data  = dataConversionClass.conversionHandler(res)
+        const data  = DataConversionClass.conversionHandler(res)
         setDataFilter(data)
       })
     }else{
