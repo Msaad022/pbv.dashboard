@@ -19,6 +19,7 @@ const ManTrackMap = ({ trackPoints }) => {
 
   useEffect(() => {
     loader.load().then(() => {
+      console.log(count);
       if(count == 1){
         map = new google.maps.Map(mapRef.current, {
           center: { lat: 17.7749, lng: -112.4194 },
@@ -26,6 +27,7 @@ const ManTrackMap = ({ trackPoints }) => {
         })
       }
     }).then(()=>{
+      if(map != undefined){
         trackPath = new google.maps.Polyline({
           path: trackPoints,
           geodesic: true,
@@ -56,6 +58,7 @@ const ManTrackMap = ({ trackPoints }) => {
         });
 
         map.fitBounds(boundsRef.current);
+      }
     })
 
     return () => {trackPath.setMap(null); endMarker.setMap(null); startMarker.setMap(null); count++}
