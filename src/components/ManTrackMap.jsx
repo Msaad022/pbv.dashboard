@@ -6,17 +6,18 @@ const loader = new Loader({
   version: "weekly",
 });
 
-var map, startMarker = { setMap:function(){} }, endMarker = { setMap:function(){} } ,count = 0
+var map,
+  startMarker = { setMap:function(){} },
+  endMarker = { setMap:function(){} },
+  trackPath = { setMap:function(){} },
+  count = 0
 
 const ManTrackMap = ({ trackPoints }) => {
-  
   const mapRef = useRef(null);
   const markersRef = useRef([]);
   const boundsRef = useRef(null);
 
   useEffect(() => {
-    let trackPath = {}
-
     loader.load().then(() => {
       if(count == 0){
         map = new google.maps.Map(mapRef.current, {
@@ -58,41 +59,9 @@ const ManTrackMap = ({ trackPoints }) => {
       map.fitBounds(boundsRef.current);
     })
 
-    return () => {endMarker.setMap(null); startMarker.setMap(null); trackPath.setMap(null) ; count++}
+    return () => {trackPath.setMap(null); endMarker.setMap(null); startMarker.setMap(null); count++}
 
   }, [trackPoints]);
-
-  // useEffect(() => {
-  //   loader.load().then(() => {
-  //     trackPath = new google.maps.Polyline({
-  //       path: trackPoints,
-  //       geodesic: true,
-  //       strokeColor: "#FF0000",
-  //       strokeOpacity: 1.0,
-  //       strokeWeight: 2,
-  //     });
-
-  //     trackPath.setMap(map);
-
-  //     endMarker = new google.maps.Marker({
-  //       position: trackPoints[trackPoints.length - 1],
-  //       map,
-  //       title: "End",
-  //     });
-
-  //     markersRef.current = [startMarker, endMarker];
-  //     boundsRef.current = new google.maps.LatLngBounds();
-
-  //     trackPoints.forEach((point) => {
-  //       boundsRef.current.extend(point);
-  //     });
-
-  //     map.fitBounds(boundsRef.current);
-  //   });
-    
-  //   return () => {endMarker.setMap(null); trackPath.setMap(null)};
-
-  // }, [trackPoints]);
 
   useLayoutEffect(() => {
     if (markersRef.current.length > 0) {
