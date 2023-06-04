@@ -19,44 +19,43 @@ const ManTrackMap = ({ trackPoints }) => {
 
   useEffect(() => {
     loader.load().then(() => {
-      if(count == 0){
+      if(count == 1){
         map = new google.maps.Map(mapRef.current, {
           center: { lat: 17.7749, lng: -112.4194 },
           zoom: 11, // Change zoom level to 11
         })
       }
     }).then(()=>{
+        trackPath = new google.maps.Polyline({
+          path: trackPoints,
+          geodesic: true,
+          strokeColor: "#FF0000",
+          strokeOpacity: 1.0,
+          strokeWeight: 2,
+        });
+        trackPath.setMap(map);
 
-      trackPath = new google.maps.Polyline({
-        path: trackPoints,
-        geodesic: true,
-        strokeColor: "#FF0000",
-        strokeOpacity: 1.0,
-        strokeWeight: 2,
-      });
-      trackPath.setMap(map);
+        startMarker = new google.maps.Marker({
+          position: trackPoints[0],
+          icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|42EF54',
+          map,
+          title: "Start",
+        });
 
-      startMarker = new google.maps.Marker({
-        position: trackPoints[0],
-        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|42EF54',
-        map,
-        title: "Start",
-      });
+        endMarker = new google.maps.Marker({
+          position: trackPoints[trackPoints.length - 1],
+          map,
+          title: "End",
+        });
 
-      endMarker = new google.maps.Marker({
-        position: trackPoints[trackPoints.length - 1],
-        map,
-        title: "End",
-      });
+        markersRef.current = [startMarker, endMarker];
+        boundsRef.current = new google.maps.LatLngBounds();
 
-      markersRef.current = [startMarker, endMarker];
-      boundsRef.current = new google.maps.LatLngBounds();
+        trackPoints.forEach((point) => {
+          boundsRef.current.extend(point);
+        });
 
-      trackPoints.forEach((point) => {
-        boundsRef.current.extend(point);
-      });
-
-      map.fitBounds(boundsRef.current);
+        map.fitBounds(boundsRef.current);
     })
 
     return () => {trackPath.setMap(null); endMarker.setMap(null); startMarker.setMap(null); count++}
