@@ -6,7 +6,7 @@ const loader = new Loader({
   version: "weekly",
 });
 
-var map, startMarker, endMarker = { setMap:function(){} }
+var map, startMarker, endMarker = { setMap:function(){} } ,count = 0
 
 const ManTrackMap = ({ trackPoints }) => {
   
@@ -15,11 +15,16 @@ const ManTrackMap = ({ trackPoints }) => {
   const boundsRef = useRef(null);
 
   useEffect(() => {
+    let trackPath = {}
+
     loader.load().then(() => {
-      map = new google.maps.Map(mapRef.current, {
-        center: { lat: 17.7749, lng: -112.4194 },
-        zoom: 11, // Change zoom level to 11
-      })
+      console.log(count);
+      if(count == 0){
+        map = new google.maps.Map(mapRef.current, {
+          center: { lat: 17.7749, lng: -112.4194 },
+          zoom: 11, // Change zoom level to 11
+        })
+      }
 
       startMarker = new google.maps.Marker({
         position: trackPoints[0],
@@ -28,12 +33,7 @@ const ManTrackMap = ({ trackPoints }) => {
         title: "Start",
       });
 
-    });
-  }, []);
-
-  useEffect(() => {
-    let trackPath = {}
-    loader.load().then(() => {
+    }).then(()=>{
       trackPath = new google.maps.Polyline({
         path: trackPoints,
         geodesic: true,
@@ -58,11 +58,43 @@ const ManTrackMap = ({ trackPoints }) => {
       });
 
       map.fitBounds(boundsRef.current);
-    });
-    
-    return () => {endMarker.setMap(null); trackPath.setMap(null)};
+    })
+
+    return () => {endMarker.setMap(null); trackPath.setMap(null) ; count++}
 
   }, [trackPoints]);
+
+  // useEffect(() => {
+  //   loader.load().then(() => {
+  //     trackPath = new google.maps.Polyline({
+  //       path: trackPoints,
+  //       geodesic: true,
+  //       strokeColor: "#FF0000",
+  //       strokeOpacity: 1.0,
+  //       strokeWeight: 2,
+  //     });
+
+  //     trackPath.setMap(map);
+
+  //     endMarker = new google.maps.Marker({
+  //       position: trackPoints[trackPoints.length - 1],
+  //       map,
+  //       title: "End",
+  //     });
+
+  //     markersRef.current = [startMarker, endMarker];
+  //     boundsRef.current = new google.maps.LatLngBounds();
+
+  //     trackPoints.forEach((point) => {
+  //       boundsRef.current.extend(point);
+  //     });
+
+  //     map.fitBounds(boundsRef.current);
+  //   });
+    
+  //   return () => {endMarker.setMap(null); trackPath.setMap(null)};
+
+  // }, [trackPoints]);
 
   useLayoutEffect(() => {
     if (markersRef.current.length > 0) {
