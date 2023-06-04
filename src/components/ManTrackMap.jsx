@@ -6,7 +6,7 @@ const loader = new Loader({
   version: "weekly",
 });
 
-var map, startMarker, endMarker = { setMap:function(){} } ,count = 0
+var map, startMarker = { setMap:function(){} }, endMarker = { setMap:function(){} } ,count = 0
 
 const ManTrackMap = ({ trackPoints }) => {
   
@@ -18,22 +18,14 @@ const ManTrackMap = ({ trackPoints }) => {
     let trackPath = {}
 
     loader.load().then(() => {
-      console.log(count);
       if(count == 0){
         map = new google.maps.Map(mapRef.current, {
           center: { lat: 17.7749, lng: -112.4194 },
           zoom: 11, // Change zoom level to 11
         })
       }
-
-      startMarker = new google.maps.Marker({
-        position: trackPoints[0],
-        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|42EF54',
-        map,
-        title: "Start",
-      });
-
     }).then(()=>{
+
       trackPath = new google.maps.Polyline({
         path: trackPoints,
         geodesic: true,
@@ -41,8 +33,14 @@ const ManTrackMap = ({ trackPoints }) => {
         strokeOpacity: 1.0,
         strokeWeight: 2,
       });
-
       trackPath.setMap(map);
+
+      startMarker = new google.maps.Marker({
+        position: trackPoints[0],
+        icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|42EF54',
+        map,
+        title: "Start",
+      });
 
       endMarker = new google.maps.Marker({
         position: trackPoints[trackPoints.length - 1],
@@ -60,7 +58,7 @@ const ManTrackMap = ({ trackPoints }) => {
       map.fitBounds(boundsRef.current);
     })
 
-    return () => {endMarker.setMap(null); trackPath.setMap(null) ; count++}
+    return () => {endMarker.setMap(null); startMarker.setMap(null); trackPath.setMap(null) ; count++}
 
   }, [trackPoints]);
 
